@@ -1,0 +1,42 @@
+// Code your design here
+module fr(result,eor,exor,eadd,esub,eand,z,c,p,b,flagreg,clk);
+  input[8:0]result;
+  input eor,exor,eadd,esub,eand,clk;
+  output z,c,p,b;
+  output reg [3:0]flagreg;
+  assign z=  ((result==9'b0)||(result==9'b100000000))?1'b1:1'b0;
+  assign c=  eadd ? result[8]:1'b0;
+  assign p=  result[7]+result[6]+result[5]+result[4]+result[3]+result[2]+result[1]+result[0];
+  assign b=  esub ? result[8]:1'b0;
+  always @(negedge clk)
+    assign flagreg={z,c,p,b};
+endmodule
+
+Test Bench:
+// Code your testbench here
+// or browse Examples
+module tb;
+  reg[8:0]result;
+  reg eor,exor,eadd,esub,eand,clk;
+  wire z,c,p,b;
+  wire [3:0]flagreg;
+  fr B(result,eor,exor,eadd,esub,eand,z,c,p,b,flagreg,clk);
+ always #10 clk=~clk;
+  
+  initial
+    
+    begin
+      clk=1'b0;
+      eor=1'b0;
+      exor=1'b0;
+      eand=1'b0;
+      eadd=1'b0;
+      esub=1'b0;
+    end
+  initial
+    begin
+      $monitor($time,"result:%h;eor:%b;exor:%b;eadd:%b;esub:%b;eand:%b;z:%b;c:%b,p:%b;b:%b;flagreg:%b;clk:%b",result,eor,exor,eadd,esub,eand,z,c,p,b,flagreg,clk);
+      #12 result=9'h1ff;eadd=1'b1;
+      #10 $finish;
+    end
+endmodule
