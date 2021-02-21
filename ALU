@@ -1,0 +1,74 @@
+module ALU1(input [7:0] a,b,
+          input clk,eor,exor,esub,eadd,eand,enor,exnor,enand,
+            output reg [7:0] result);
+  
+  
+  always @ (negedge clk)
+    if(eor)
+      begin
+        result=a|b;
+      end
+  else if(exor)
+    begin
+      result=a^b;
+    end
+  else if(esub)
+    begin
+      result=a-b;
+    end
+  else if(eadd)
+    begin
+      result=a+b;
+    end
+  else if(eand)
+    begin
+      result=a&b;
+    end
+  else if(enand)
+    begin
+      result=(a~&b);
+    end
+  else if(enor)
+    begin
+      result=(a~|b);
+    end
+  else if(exnor)
+    begin
+      result=(a~^b);
+    end
+    
+    
+endmodule
+    
+  
+   
+Test Bench:
+module tb;
+  reg [7:0] a,b;
+  reg clk,eor,exor,esub,eadd,eand,enor,exnor,enand;
+  wire [7:0] result;
+  
+  ALU1 x(a,b,clk,eor,exor,esub,eadd,eand,enor,exnor,enand,result);
+  always #10 clk=~clk;
+  
+  initial
+    begin
+      clk=1'b0;
+      eor=1'b0;
+      exor=1'b0;
+      esub=1'b0;
+      eadd=1'b0;
+      eand=1'b0;
+      enor=1'b0;
+      exnor=1'b0;
+      enand=1'b0;
+    end
+  
+  initial
+    begin
+      $monitor($time,"a:%b;b:%b;clk:%b;eor:%b;exor:%b;esub:%b;eadd:%b;eand:%b;enor:%b;exnor:%b;enand:%b;result:%b",a,b,clk,eor,exor,esub,eadd,eand,enor,exnor,enand,result);
+      
+      #12 a=8'b00000011;b=8'b00000011;eand=1'b1;
+      #10 $finish;
+    end
+endmodule
